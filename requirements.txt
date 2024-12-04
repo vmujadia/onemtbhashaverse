@@ -1,0 +1,15 @@
+sentencepiece
+--find-links https://download.pytorch.org/whl/cu121 torch==2.3.1 
+torchvision==0.18.1 
+torchaudio==2.3.1
+numpy
+importlib-resources
+tensorboardX
+gunicorn==20.1.0
+uvicorn==0.15.0
+fastapi==0.70.0
+jieba==0.42.1
+pytest==5.4.3
+pytest-html==3.1.1
+requests
+joblib
