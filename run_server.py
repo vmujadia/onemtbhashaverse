@@ -78,12 +78,15 @@ def do_predict(request: Request, body: InferenceInput):
     logger.info(f'input: {body}')
 
     # prepare input data
+    task = body.task
+    domain = body.domain
     source_language = body.source_language
     target_language = body.target_language
     text = body.text
+    ttext = body.ttext
 
     # run model inference
-    output = translate_onemt(text, source_language, target_language)
+    output = translate_onemt(task, domain, text, ttext, source_language, target_language)
 
     print (output)
 

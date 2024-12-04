@@ -9,7 +9,10 @@ class InferenceInput(BaseModel):
     """
     Input values for model inference
     """
+    task: str = Field(..., example='hello, my name is onemt.', title='a sentence at a time')
+    domain: str = Field(..., example='hello, my name is onemt.', title='a sentence at a time')
     text: str = Field(..., example='hello, my name is onemt.', title='a sentence at a time')
+    ttext: str = Field(..., example='hello, my name is onemt.', title='a sentence at a time')
     source_language: str = Field(..., example='eng', title='language of given text, in 3 character language code, i.e eng for English')
     target_language: str = Field(..., example='hin', title='language of text in which translation needs to be happen, in 3 character language code, i.e hin for Hindi')
 

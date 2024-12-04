@@ -14,7 +14,7 @@ URL_TDIC="https://posteditme.sgp1.cdn.digitaloceanspaces.com/onemtbyvandan/versi
 
 SUBWORD_MODEL_PATH="models/IL2ILEN_June7_2024.model"
 TRANSLATION_MODEL_FOLDER="models/"
-TRANSLATION_MODEL_PATH="models/checkpoint_13_65000.pt"
+TRANSLATION_MODEL_PATH="models/onemtv3b.pt"
 
 language_mapping = {
     "asm": "asm_Beng",
