@@ -3,12 +3,12 @@ onemtbhashaverse
 
 # Supports
 
--Translation Across 36 × 36 Indian Language Pairs
--Discourse Translation
--Domain-Specific Translation
--Machine Translation Evaluation
--Translation Error Identification and Categorization
--Automatic Post-Editing (APE)
+- Translation Across 36 × 36 Indian Language Pairs
+- Discourse Translation
+- Domain-Specific Translation
+- Machine Translation Evaluation
+- Translation Error Identification and Categorization
+- Automatic Post-Editing (APE)
 
 
 # Cite
