@@ -94,60 +94,186 @@ def split_into_parts(text, num_words=100):
   return parts
 
 
+def translate_onemtbck(task, domain, text, ttext, sl, tl):
+    nsl = add_family(language_mapping[sl])
+    ntl = add_family(language_mapping[tl])
+    
+    text = text.replace('।','.').replace('\u200c','')
+    ttext = ttext.replace('।','.').replace('\u200c','')
+
+    c=0
+    outputs = []
+    for part in text.split('\n'):
+        part=part.strip()
+        if part=='':
+            outputs.append('')
+            continue
+
+        if task=='Translation':
+            nsl = add_family(language_mapping[sl])
+            ntl = add_family(language_mapping[tl])
+            part = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: part }}
+        elif task=='Grammar33':
+            #nsl = add_family(language_mapping['eng'])
+            #ntl = add_family(language_mapping['hin'])
+            text = {'task': 'Correction$Incorrect'+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+
+        elif task=='Translation quality estimation':
+            #nsl = add_family(language_mapping['eng'])
+            #ntl = add_family(language_mapping['hin'])
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        elif task=='Translation post editing':
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        elif task=='Translation error marking':
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        #else:
+        #    text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+
+
+        print ('1--->',part)
+        soutput = s.encode(str(part), out_type=str)
+        print ('2--->',soutput)
+        out = translator.translate([" ".join(soutput)])
+        print (out[0],'<----------OOO')
+        if task=='Translation':
+            output = eval(out[0].replace(' ','').replace('▁',' '))['output'][ntl]
+        #elif task=='Translation quality estimation':
+        #    output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']).replace(' out of 100','')
+        #elif task=='Translation post editing':
+        #    output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']['post edited '+ntl])
+        #elif task=='Translation error marking':
+        #    output = str(eval(out[0].replace(' ','').replace('▁',' '))['output'])
+        #else:
+        #    output = str(eval(out[0].replace(' ','').replace('▁',' '))['output'])
+        '''
+        if len(text.split())>200:
+            otext = ''
+            for p in split_into_parts(text):
+                soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+p, out_type=str)
+                out = translator.translate([" ".join(soutput)])
+                output = out[0].replace(' ','').replace('▁',' ')
+                otext = otext + ' '+output
+            return otext.strip()
+        else:
+            soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+text, out_type=str)
+            out = translator.translate([" ".join(soutput)])
+            output = out[0].replace(' ','').replace('▁',' ')
+        '''
+        output = output.replace('।','.')
+        outputs.append(output)
+        print (output, 'Before')
+        c=c+1
+
+    if task=='Translation':
+        send = "\n".join(outputs)
+    else:
+        send = outputs[0]
+
+    return send.strip().replace('\u200c','')
+
+
+
 def translate_onemt(task, domain, text, ttext, sl, tl):
     nsl = add_family(language_mapping[sl])
     ntl = add_family(language_mapping[tl])
     
-    text = text.replace('।','.')
-    ttext = ttext.replace('।','.')
+    text = text.replace('।','.').replace('\u200c','')
+    ttext = ttext.replace('।','.').replace('\u200c','')
 
+    outputs = []
     if task=='Translation':
-        nsl = add_family(language_mapping[sl])
-        ntl = add_family(language_mapping[tl])
-        text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text }}
-    elif task=='Translation quality estimation':
-        #nsl = add_family(language_mapping['eng'])
-        #ntl = add_family(language_mapping['hin'])
-        text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
-    elif task=='Translation post editing':
-        text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
-    else:
-        text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        for part in text.split('\n'):
+            part=part.strip()
+            if part=='':
+                outputs.append('')
+                continue
 
+            nsl = add_family(language_mapping[sl])
+            ntl = add_family(language_mapping[tl])
+            
+            if nsl==ntl:
+                part = {'task': 'Correction$Incorrect'+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: part }}
+            else:
+                part = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: part }}
+        
+            print ('1--->',part)
+            soutput = s.encode(str(part), out_type=str)
+            print ('2--->',soutput)
+            out = translator.translate([" ".join(soutput)])
+            print (out[0],'<----------OOO')
+            if nsl==ntl:
+                output = eval(out[0].replace(' ','').replace('▁',' '))['output']['Corrected '+ntl]
+            else:
+                output = eval(out[0].replace(' ','').replace('▁',' '))['output'][ntl]
 
-    print ('1--->',text)
-    soutput = s.encode(str(text), out_type=str)
-    print ('2--->',soutput)
-    out = translator.translate([" ".join(soutput)])
-    print (out[0],'<----------OOO')
-    if task=='Translation':
-        output = eval(out[0].replace(' ','').replace('▁',' '))['output'][ntl]
-    elif task=='Translation quality estimation':
-        #print (eval(out[0].replace(' ','').replace('▁',' ')))
-        #output = 'quality estimation :'+ str(eval(out[0].replace(' ','').replace('▁',' '))['output']['quality estimation score out of 100']*100,2)
-        output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']).replace(' out of 100','')
-    elif task=='Translation post editing':
-        output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']['post edited '+ntl])
+            output = output.replace('।','.')
+            outputs.append(output)
+
     else:
-        output = str(eval(out[0].replace(' ','').replace('▁',' '))['output'])
-    '''
-    if len(text.split())>200:
-        otext = ''
-        for p in split_into_parts(text):
-            soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+p, out_type=str)
+        if nsl==ntl:
+            #nsl = add_family(language_mapping['eng'])
+            #ntl = add_family(language_mapping['hin'])
+            text = {'task': 'Correction$Incorrect'+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+
+        elif task=='Translation quality estimation':
+            nsl = add_family(language_mapping['eng'])
+            ntl = add_family(language_mapping['hin'])
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        elif task=='Translation post editing':
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        elif task=='Translation error marking':
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+        else:
+            text = {'task': task+'$'+nsl+'#'+ntl, 'domain': domain, 'input': {nsl: text , ntl: ttext}}
+
+        print ('1--->',text)
+        soutput = s.encode(str(text), out_type=str)
+        print ('2--->',soutput)
+        out = translator.translate([" ".join(soutput)])
+        print (out[0],'<----------OOO')
+        if task=='Translation':
+            output = eval(out[0].replace(' ','').replace('▁',' '))['output'][ntl]
+        elif task=='Translation quality estimation':
+            output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']).replace(' out of 100','')
+        elif task=='Translation post editing':
+            output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']['post edited '+ntl])
+        elif task=='Translation error marking':
+            output = str(eval(out[0].replace(' ','').replace('▁',' '))['output'])
+        else:
+            output = str(eval(out[0].replace(' ','').replace('▁',' '))['output'])
+            pre_output = str(eval(out[0].replace(' ','').replace('▁',' '))['output']['post edited'+ntl])
+            noutput = []
+            for w in pre_output.split():
+                if w not in ttext:
+                    noutput.append('<c>'+w+'</c>')
+                else:
+                    noutput.append(w)
+            pre_output1 = " ".join(noutput)
+            output = output.replace(pre_output,pre_output1)
+        '''
+        if len(text.split())>200:
+            otext = ''
+            for p in split_into_parts(text):
+                soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+p, out_type=str)
+                out = translator.translate([" ".join(soutput)])
+                output = out[0].replace(' ','').replace('▁',' ')
+                otext = otext + ' '+output
+            return otext.strip()
+        else:
+            soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+text, out_type=str)
             out = translator.translate([" ".join(soutput)])
             output = out[0].replace(' ','').replace('▁',' ')
-            otext = otext + ' '+output
-        return otext.strip()
-    else:
-        soutput = s.encode('###'+nsl+'-to-'+ntl+'### '+text, out_type=str)
-        out = translator.translate([" ".join(soutput)])
-        output = out[0].replace(' ','').replace('▁',' ')
-    '''
-    output = output.replace('।','.')
-    print (output, 'Before')
+        '''
+        output = output.replace('।','.')
+        outputs.append(output)
+        print (output, 'Before')
 
-    return output.strip()
+    if task=='Translation':
+        send = "\n".join(outputs)
+    else:
+        send = outputs[0]
+
+    return send.strip().replace('\u200c','')
 
 #_inp = "{'task': 'Translation$WesternIndic+guj_Gujr#WestGermanic+eng_Latn', 'domain': 'general', 'output': {'CentralIndic+hin_Deva': 'नई दिल्ली-केंद्र सरकार ने महंगाई भत्ते में वृद्धि की घोषणा की है। यह वृद्धि उन केंद्रीय कर्मचारियों और स्वायत्त संस्थानों के कर्मचारियों पर लागू होगी, जिन्हें 5वें और 6वें वेतन आयोग के अनुसार वेतन मिल रहा है। वित्त मंत्रालय में सार्वजनिक उद्यम विभाग ने इस संबंध में 7 नवंबर 2024 को एक कार्यालय ज्ञापन जारी किया है। }}}"
 

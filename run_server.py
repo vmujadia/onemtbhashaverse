@@ -86,6 +86,8 @@ def do_predict(request: Request, body: InferenceInput):
     ttext = body.ttext
 
     # run model inference
+
+    print (task, domain, text, ttext, source_language, target_language)
     output = translate_onemt(task, domain, text, ttext, source_language, target_language)
 
     print (output)
