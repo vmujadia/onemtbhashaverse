@@ -250,6 +250,7 @@ def translate_onemt(task, domain, text, ttext, sl, tl):
                     noutput.append(w)
             pre_output1 = " ".join(noutput)
             output = output.replace(pre_output,pre_output1)
+            #output = pre_output1#output.replace(pre_output,pre_output1)
         '''
         if len(text.split())>200:
             otext = ''
