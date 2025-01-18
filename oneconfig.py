@@ -7,12 +7,12 @@ GLOBAL_CONFIG = {
         }
 
 
-URL_SPM_MODEL="https://vandanresearch.sgp1.digitaloceanspaces.com/bhashaverse/IL2ILEN_June7_2024.model"
+URL_SPM_MODEL="https://vandanresearch.sgp1.digitaloceanspaces.com/bhashaverse/onemtv3b_spm.model"
 URL_ONEMT_MODEL="https://vandanresearch.sgp1.digitaloceanspaces.com/bhashaverse/onemtv3b.pt"
 URL_SDIC="https://vandanresearch.sgp1.digitaloceanspaces.com/bhashaverse/dict.SRC.txt"
 URL_TDIC="https://vandanresearch.sgp1.digitaloceanspaces.com/bhashaverse/dict.TGT.txt"
 
-SUBWORD_MODEL_PATH="models/IL2ILEN_June7_2024.model"
+SUBWORD_MODEL_PATH="models/onemtv3b_spm.model"
 TRANSLATION_MODEL_FOLDER="models/"
 TRANSLATION_MODEL_PATH="models/onemtv3b.pt"
 
